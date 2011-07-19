@@ -4,7 +4,7 @@ NBP
 Function(s) related  to Polish National  Bank.  The basic goal  was to
 create function to get exchange rate for the given currency and date:
 
-.. code-block:: python
+::
 
    from datetime import date
    import nbp
@@ -36,7 +36,7 @@ working day.
 Result  of the 'download_exchange_rate'  algorithm is  dictionary with
 following keys:
 
-.. code-block:: python
+::
 
    { 'search_date': <date which was passed to the algorithm as string>,
      'table_no':    <nbp currency table no eg. '132/A/NBP/2010'>,
