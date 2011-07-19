@@ -6,12 +6,12 @@ create function to get exchange rate for the given currency and date:
 
 .. code-block:: python
 
-  from datetime import date
-  import nbp
+   from datetime import date
+   import nbp
 
 
-  currency_data = nbp.download_exchange_rate(date(2010, 7, 11), 'EUR')
-  assert currency_data == {
+   currency_data = nbp.download_exchange_rate(date(2010, 7, 11), 'EUR')
+   assert currency_data == {
         'search_date': '2010-07-11',
         'table_no': u'132/A/NBP/2010',
         'pub_date': u'2010-07-09',
@@ -38,7 +38,7 @@ following keys:
 
 .. code-block:: python
 
-   { 'search_date': <date which was passed to the algorithm as string>
+   { 'search_date': <date which was passed to the algorithm as string>,
      'table_no':    <nbp currency table no eg. '132/A/NBP/2010'>,
      'pub_date':    <publication date of table, it can be diffrent then 'search_date'>,
      'currency': {
