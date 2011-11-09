@@ -15,10 +15,10 @@ class Currency(object):
 
     def to_dict(self, rescale_rate=False):
         values = {
-            'currency_name': self.name,
+            'name': self.name,
             'scaler': self.scaler,
             'rate': self.rate,
-            'currency_code': self.code }
+            'code': self.code }
 
         if rescale_rate:
             values['rate'] = self.rate / values.pop('scaler')

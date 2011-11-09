@@ -22,7 +22,7 @@ def count_non_weekend_days(date):
     while current <= date:
         if not nbp_utils.is_weekend_date(current):
             counter += 1
-        current = current + datetime.timedelta(days=1)    
+        current = current + datetime.timedelta(days=1)
     return counter
 
 
@@ -70,9 +70,9 @@ def get_url(year, day_num, table_type):
     - year
     - short_year
     - day_num (three digits int string with leading zeros if there are nessesary)
-    - table_tyle 
+    - table_tyle
     """
-    short_year = str(year)[2:]    
+    short_year = str(year)[2:]
     day_num = str(day_num).rjust(3, '0')
     p = year, table_type, short_year, table_type, day_num
     params = {
