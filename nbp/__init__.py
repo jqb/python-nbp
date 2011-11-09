@@ -14,6 +14,10 @@ def download_and_parse_table(date, table_type):
         resp = table.download(url)
         if resp:
             parsed = table.parse(resp)
+
+            # update meta info: url of table
+            parsed['url'] = url
+
             pub_date = datetime.strptime(parsed.get('pub_date'), '%Y-%m-%d')
             if not pub_date.date() > date:
                 return parsed
@@ -27,6 +31,7 @@ def format_result(nbp_table, currency, search_date):
         'search_date' : search_date.strftime('%Y-%m-%d'),
         'table_no' : nbp_table['table_no'],
         'pub_date' : nbp_table['pub_date'],
+        'url'      : nbp_table['url'],
         'currency' : currency_obj.to_dict(rescale_rate=True),
         }
 
