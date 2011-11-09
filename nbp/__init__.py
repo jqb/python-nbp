@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+VERSION = '1.0.1'
+
 from datetime import datetime, date  # "date" for user usage only
 import table
-
 
 
 def download_and_parse_table(date, table_type):

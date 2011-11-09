@@ -2,14 +2,16 @@
 import os
 from setuptools import setup, find_packages
 
+import nbp
+
 
 setup(
     name='nbp',
-    version='1.0',
+    version=nbp.VERSION,
     description='Polish National Bank currency rate downloader.',
     author='Kuba Janoszek',
     author_email='kuba.janoszek@gmail.com',
-    url='https://github.com/jqb/python-nbp/tree/ver-1.0',
+    url='https://github.com/jqb/python-nbp/tree/ver-%s' % nbp.VERSION,
     packages=find_packages(),
     classifiers=[
         'Development Status :: 4 - Beta',
