@@ -9,7 +9,7 @@ setup(
     description='Polish National Bank currency rate downloader.',
     author='Kuba Janoszek',
     author_email='kuba.janoszek@gmail.com',
-    url='https://github.com/jqb/python-nbp',
+    url='https://github.com/jqb/python-nbp/tree/ver-1.0',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -20,5 +20,6 @@ setup(
         'Programming Language :: Python',
     ],
     include_package_data=True,
+    setup_requires=['setuptools_git'],
     zip_safe=False,
     )
