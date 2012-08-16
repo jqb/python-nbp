@@ -56,11 +56,11 @@ following keys:
          }}
 
 
-Requirements
-============
+Tests
+=====
 
-nosetest for tests
+To test package simply download it and type
 
 ::
 
-    $ nosetests tests.py
+    $ python tests.py
