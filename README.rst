@@ -37,7 +37,7 @@ B and C. The module uses only A and B.  The A table is published every
 working day and B table only on wednesdays.
 
 The module first search for the  currency in the A table, and if there
-is no  results it  searches B.  It the date  you provide  doesn't have
+is no  results it  searches B.  If the date  you provide  doesn't have
 record  in the  tables,  algtorithm searches  for  the first  previous
 working day.
 
