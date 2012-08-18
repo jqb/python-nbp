@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import date  # "date" for user usage only
 from . import publication
+from . import caching
 
 
 def format_result(nbp_table, currency, search_date):
@@ -14,9 +15,9 @@ def format_result(nbp_table, currency, search_date):
     }
 
 
-def download_exchange_rate(date, currency):
+def download_exchange_rate(date, currency, cache_dir=None):
     for table_type in ['a', 'b']:
-        nbp_table = publication.get_table(date, table_type)
+        nbp_table = publication.get_table(date, table_type, cache_dir=cache_dir)
         if nbp_table and currency in nbp_table:
             return format_result(nbp_table, currency, date)
     return None

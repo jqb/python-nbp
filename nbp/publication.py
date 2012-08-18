@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
 import urllib2
 from datetime import datetime, date, timedelta
 from xml.dom import minidom
 
-from . import dateutils
+from . import dateutils, caching
 from .models import Currency, Table
 
 
@@ -12,49 +13,46 @@ NBP_CURRENCY_TABLE_URL_PREFIX = 'http://rss.nbp.pl/kursy/xml2/'
 NBP_CURRENCY_TABLE_URL_PATTERN = '%s/%s/%s%s%s.xml'
 # order: year, table_type, short_year, table_type, pub_number
 
-def build_url(year, pub_number, table_type, prefix=None):
+def build_url(year, pub_number, table_type, cache_dir=None):
     """
-    Builds NBP currency table URL and it's params.
+    Builds NBP currency table URL and cache_file_path if ``cache_dir``
+    is provided.
 
     :param year:       year from you want to download currency rate
     :param pub_number: number publication in the given year & table_type
 
     Returns a tuple:
       ``url``             - builded url as string,
-      ``url_params_dict`` - params that was used to build th url
-
-    ``url_params_dict`` contains following keys:
-        ``year``, ``short_year``, ``pub_number``, ``table_type``
+      ``cache_file_path`` - path to local cache file that might be used
 
     Usage::
 
        >>> from nbp import publication
        >>> publication.build_url(2012, 123, 'a')
-       >>> ('http://rss.nbp.pl/kursy/xml2/2012/a/12a123.xml', {
-       ...    'pub_number': '123',
-       ...    'table_type': 'a',
-       ...    'short_year': '12',
-       ...    'year': 2012
-       ... })
+       >>> ('http://rss.nbp.pl/kursy/xml2/2012/a/12a123.xml', None)
+       >>>
+       >>> publication.build_url(2012, 123, 'a', cache_dir='/home/<user>/.nbp/')
+       >>> ('http://rss.nbp.pl/kursy/xml2/2012/a/12a123.xml',
+       ...  '/home/<user>/.nbp/2012/a/12a123.xml')
     """
-    prefix = prefix or NBP_CURRENCY_TABLE_URL_PREFIX
-
+    prefix = NBP_CURRENCY_TABLE_URL_PREFIX
     short_year = str(year)[2:]                 # 2012  =>  12
     pub_number = str(pub_number).rjust(3, '0') # 4     =>  004
 
     params = year, table_type, short_year, table_type, pub_number
-    url = '%s%s' % (prefix, NBP_CURRENCY_TABLE_URL_PATTERN % params)
-    return (url, {
-        'year'       : year,
-        'pub_number' : pub_number,
-        'short_year' : short_year,
-        'table_type' : table_type
-    })
+    path = NBP_CURRENCY_TABLE_URL_PATTERN % params
+
+    url = '%s%s' % (prefix, path)
+    if cache_dir:
+        cache_file_path = os.path.join(cache_dir, path)
+    else:
+        cache_file_path = None
+    return (url, cache_file_path)
 
 
-def gen_urls(year=None, pub_number=None, table_type=None, gen_number=15):
+def gen_urls(year=None, pub_number=None, table_type=None, gen_number=15, cache_dir=None):
     """
-    Generator that iterates tuples of (``url``, ``url_params``)
+    Generator that iterates tuples of (``url``, ``cache_file_path``)
     down over existing publication numbers.
 
     You can change number of generation via ``gen_number`` kwarg.
@@ -66,7 +64,7 @@ def gen_urls(year=None, pub_number=None, table_type=None, gen_number=15):
             previous_year_date = date(year, 1, 1) - timedelta(days=1)
             year       = previous_year_date.year
             pub_number = calculate_number(previous_year_date, table_type)
-        yield build_url(year, pub_number, table_type)
+        yield build_url(year, pub_number, table_type, cache_dir=cache_dir)
         pub_number -= 1
         gen_number -= 1
 # END #######################################################################
@@ -102,8 +100,24 @@ def download(url):
         if hasattr(resp, 'getcode') and resp.getcode() == 200:
             return resp
     except urllib2.URLError, e:
-        resp = None
-    return resp
+        return None
+
+
+def fetch_data(url, cache_file_path):
+    if cache_file_path:
+        cache = caching.get_cache(cache_file_path)
+        if not cache.dir_exists():
+            cache.create_dir()
+
+        if not cache.file_exists():
+            data = download(url)
+            if data:
+                cache.save(data)
+
+        if cache.file_exists():
+            return cache.open()
+    else:
+        return download(url)
 
 
 def parse(file_, url=None):
@@ -138,7 +152,7 @@ def parse(file_, url=None):
     return table
 
 
-def get_table(date, table_type):
+def get_table(date, table_type, cache_dir=None):
     """
     Download and parse latest NBP table for given 'date' and 'table_type'
     """
@@ -146,13 +160,14 @@ def get_table(date, table_type):
         pub_number = calculate_number(date, table_type),
         year       = date.year,
         table_type = table_type,
+        cache_dir  = cache_dir,
     )
 
-    for url, p in urlsgen:
-        resp = download(url)
-        if resp:
-            table = parse(resp, url=url)
+    for url, cache_file_path in urlsgen:
+        data = fetch_data(url, cache_file_path)
+        if data:
+            table = parse(data, url=url)
             if not table.publication_date.date() > date:
                 return table
-
+            data.close()
     return None

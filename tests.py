@@ -19,7 +19,8 @@ class NBPTests(unittest.TestCase):
                 'code': u'EUR',
                 },
             }
-        currency_data = nbp.download_exchange_rate(nbp.date(2010, 7, 11), 'EUR')
+        currency_data = nbp.download_exchange_rate(
+            nbp.date(2010, 7, 11), 'EUR', cache_dir='/home/kuba/.nbp/')
         self.assertEquals(expexted, currency_data)
 
 
