@@ -7,7 +7,7 @@ class Currency(object):
         self.scaler = scaler
 
     def __unicode__(self):
-        return u'%s %s %s %s' % (self.name, self.scaler, self.code, self.rate)
+        return u'<%s (%s) %s %s>' % (self.name, self.code, self.scaler, self.rate)
 
     def to_dict(self, rescale_rate=False):
         values = {
@@ -24,7 +24,7 @@ class Currency(object):
 
 
 class Table(object):
-    NIL = type('NIL', (object,), {})
+    NIL = type('NIL', (object,), {})()
 
     def __init__(self, no=None, publication_date=None, url=None, positions=None):
         self.no = no
@@ -36,7 +36,7 @@ class Table(object):
         return key in self.positions
 
     def __iter__(self):
-        return iter(self.positions)
+        return iter(self.positions.itervalues())
 
     def items(self):
         return self.positions.iteritems()

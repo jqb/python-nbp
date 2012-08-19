@@ -8,6 +8,11 @@ from . import dateutils, caching
 from .models import Currency, Table
 
 
+A = 'a'
+B = 'b'
+TABLE_TYPES = [A, B]
+
+
 # URLS BUILDING AND GENERATION ##############################################
 NBP_CURRENCY_TABLE_URL_PREFIX = 'http://rss.nbp.pl/kursy/xml2/'
 NBP_CURRENCY_TABLE_URL_PATTERN = '%s/%s/%s%s%s.xml'
@@ -71,8 +76,8 @@ def gen_urls(year=None, pub_number=None, table_type=None, gen_number=15, cache_d
 
 
 TABLE_TYPES_DAY_COUNTER = {
-    'a' : dateutils.count_working_days,
-    'b' : dateutils.count_wednesdays
+    A : dateutils.count_working_days,
+    B : dateutils.count_wednesdays
 }
 
 def calculate_number(date, table_type):
@@ -83,7 +88,7 @@ def calculate_number(date, table_type):
     In NBP tables each publication has incremental number
     that depends on ``table_type``.
     """
-    assert table_type in 'abAB'
+    assert table_type in TABLE_TYPES
     func = TABLE_TYPES_DAY_COUNTER[table_type.lower()]
     return func(date)
 
@@ -185,7 +190,7 @@ def format_result(nbp_table, currency, search_date):
 
 
 def download_exchange_rate(date, currency, cache_dir=None):
-    for table_type in ['a', 'b']:
+    for table_type in TABLE_TYPES:
         nbp_table = get_table(date, table_type, cache_dir=cache_dir)
         if nbp_table and currency in nbp_table:
             return format_result(nbp_table, currency, date)

@@ -1,12 +1,12 @@
 NBP
 ===
 
-Function(s) that downloads currency rate between PLN and the given
-currency in given date. Currencies are downloaded from
-The Polish National Bank site.
+Function(s)  that downloads currency  rate between  PLN and  the given
+currency  in given  date. Currencies  are downloaded  from  The Polish
+National Bank site.
 
-For example, if you need to know what was the currency rate
-between PLN and EUR in 2010-07-11 you can simply type:
+For example,  if you need to  know what was the  currency rate between
+PLN and EUR in 2010-07-11 you can simply type:
 
 ::
 
@@ -25,8 +25,9 @@ between PLN and EUR in 2010-07-11 you can simply type:
 	   }
 
 
-`pub_date` equals to 2010-07-09 because 2010-07-11 was not the working day, so
-the algorithm tryies to find first previous working day currency.
+`pub_date` equals to 2010-07-09 because 2010-07-11 was not the working
+day,  so the  algorithm  tryies  to find  first  previous working  day
+currency.
 
 
 Explanation
@@ -56,6 +57,48 @@ following keys:
          }}
 
 
+Use cases
+=========
+
+1) The  simplest  one  is ``nbp.download_exchange_rate``  is  already
+   explained above
+
+2) ``nbp.get_table`` can be used to fetch whole table. Here's an
+   example how you might use it::
+
+       >>> import nbp
+       >>> table = nbp.get_table(nbp.date(2012, 8, 12), nbp.A)
+
+
+   - check if the given currency is in the table::
+
+       >>> 'EUR' in table
+
+
+   - get given currency from table::
+
+       >>> c = table.get('EUR')
+
+
+   - iterate over currencies::
+
+       >>> for c in table:
+       >>>    do_sth_with_currency_object(c)
+
+
+   - iterate with currencies short name::
+
+       >>> for name, currency in table.items():
+       >>>    print name, currency
+
+
+   - check table number, url, publication date (might be different then search date)::
+
+       >>> print table.no
+       >>> print table.url
+       >>> print table.publication_date
+
+
 Tests
 =====
 
@@ -64,3 +107,15 @@ To test package simply download it and type
 ::
 
     $ python tests.py
+
+
+TODOs
+=====
+
+- exceptions should be raised if user ask for non-existing currency
+
+
+Changelog
+=========
+
+1.1 - caching mechanism added

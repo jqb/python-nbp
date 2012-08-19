@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
-VERSION = '1.0.1'
+VERSION = '1.1'
 
-from .api import *
+from .publication import (download_exchange_rate, get_table, date,
+    A, B, TABLE_TYPES)
