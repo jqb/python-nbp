@@ -167,9 +167,9 @@ def get_table(date, table_type, cache_dir=None):
         data = fetch_data(url, cache_file_path)
         if data:
             table = parse(data, url=url)
+            data.close()
             if not table.publication_date.date() > date:
                 return table
-            data.close()
     return None
 
 
